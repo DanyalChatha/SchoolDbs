@@ -1,0 +1,13 @@
+﻿@model IEnumerable<SchoolDb.Models.Teacher>
+@{
+    ViewBag.Title = "list";
+}
+
+<h2>Listing all Teachers</h2>
+
+<p>There are @Model.Count() teachers in the system.</p>
+
+@foreach (var Teacher in Model)
+{
+    <h3><a href="/Teacher/Show/@Teacher.TeacherId">@Teacher.TeacherFname @Teacher.TeacherLname</a></h3>
+}
