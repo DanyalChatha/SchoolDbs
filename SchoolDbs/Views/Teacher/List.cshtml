@@ -6,6 +6,10 @@
 <h2>Listing all Teachers</h2>
 
 <p>There are @Model.Count() teachers in the system.</p>
+<form action="/Teacher/List" method="GET">
+    <input type="text" name="SearchKey" autocomplete="off" />
+    <input type="submit" value="Search" />
+</form>
 
 @foreach (var Teacher in Model)
 {

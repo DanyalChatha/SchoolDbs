@@ -1,6 +1,7 @@
 ﻿using SchoolDb.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,11 +11,11 @@ namespace SchoolDb.Controllers
     public class TeacherController : Controller
     {
         // GET: Teacher/list
-        public ActionResult list()
+        public ActionResult list(string SearchKey)
         {
             TeacherDataController MyController = new TeacherDataController();
-            IEnumerable<Teacher> Teachers = MyController.listTeacher();
-
+            IEnumerable<Teacher> Teachers = MyController.listTeacher(SearchKey);
+ 
             return View(Teachers);
         }
 

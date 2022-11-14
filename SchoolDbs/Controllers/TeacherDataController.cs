@@ -3,6 +3,7 @@ using SchoolDb.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -24,23 +25,41 @@ namespace SchoolDb.Controllers
         /// A list of Teacher (first names and last names)
         /// </returns>
         [HttpGet]
-        public IEnumerable<Teacher> listTeacher()
+        [Route("api/TeacherData/ListTeacher/{SearchKey}")]
+
+        public IEnumerable<Teacher> listTeacher(string SearchKey)
         {
             MySqlConnection Conn = School.AccessDatabase();
 
+            //Open the connection between the web server and database
             Conn.Open();
 
+            Debug.WriteLine("The search key is"+SearchKey);
 
-            string query = "select * from teachers";
+
+            string query = "select * from teachers where teacherfname like @key or teacherlname like @key or (concat(teacherfname,' ', teacherlname)) like @key";
+            
+            Debug.WriteLine(query);
+
+            //Establish a new command (query) for our database
             MySqlCommand cmd = Conn.CreateCommand();
             cmd.CommandText = query;
 
 
-            MySqlDataReader ResultSet = cmd.ExecuteReader();
-            List<Teacher> Teachers = new List<Teacher> { };
+            cmd.Parameters.AddWithValue("@key", "%"+SearchKey+"%");
+            cmd.Prepare();
 
+
+            //Gather Result Set of Query into a variable
+            MySqlDataReader ResultSet = cmd.ExecuteReader();
+
+            //Create an empty list of Authors
+            List<Teacher> Teachers = new List<Teacher> { };
+            
+            //Loop Through Each Row the Result Set
             while (ResultSet.Read())
             {
+                //Access Column information by the DB column name as an index
                 string TeacherFname = ResultSet["teacherfname"].ToString();
                 string TeacherLname = ResultSet["teacherlname"].ToString();
                 string EmployeeNumber = ResultSet["employeenumber"].ToString();
@@ -56,6 +75,7 @@ namespace SchoolDb.Controllers
                 NewTeacher.TeacherFname = TeacherFname;
                 NewTeacher.EmployeeNumber = EmployeeNumber;
 
+                //Add the Teacher Name to the List
                 Teachers.Add(NewTeacher);
             }
 
@@ -83,9 +103,11 @@ namespace SchoolDb.Controllers
             Conn.Open();
 
             //run an sql command "select * from teachers"
-            string query = "select * from teachers where teacherid =" + TeacherId;
+            string query = "select * from teachers where teacherid = @id";
             MySqlCommand cmd = Conn.CreateCommand();
             cmd.CommandText = query;
+            cmd.Parameters.AddWithValue("@id",TeacherId);
+            cmd.Prepare();
 
             MySqlDataReader ResultSet = cmd.ExecuteReader();
 
