@@ -90,7 +90,7 @@ namespace SchoolDb.Controllers
         /// </summary>
         /// <param name="TeacherId"></param>
         /// <returns>
-        /// A teachers that from the id the user input
+        /// A teachers that coresponds to the id the user input will be shown with details.
         /// </returns>
         [HttpGet]
         [Route("api/teacherdata/findteacher/{teacherid}")]
