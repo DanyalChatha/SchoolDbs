@@ -3,12 +3,16 @@
     ViewBag.Title = "list";
 }
 
+<nav>
+    <a class="navlink" href="/Teacher/New">New Teacher</a>
+</nav>
+
 <h2>Listing all Teachers</h2>
 
 <p>There are @Model.Count() teachers in the system.</p>
 <form action="/Teacher/List" method="GET">
     <input type="text" name="SearchKey" autocomplete="off" />
-    <input type="submit" value="Search" />
+    <input class="searchButton" type="submit" value="Search" />
 </form>
 
 @foreach (var Teacher in Model)

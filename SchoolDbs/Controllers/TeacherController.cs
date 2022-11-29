@@ -27,5 +27,61 @@ namespace SchoolDb.Controllers
 
             return View(SelectedTeacher);
         }
+
+        //GET: /Teacher/New
+        public ActionResult New()
+        {
+            return View();
+        }
+
+        //GET : /Author/Ajax_New
+        public ActionResult Ajax_New()
+        {
+            return View();
+
+        }
+
+
+        //POST: /Teacher/Delete/{id}
+        [HttpPost]
+
+        public ActionResult Delete(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            controller.DeleteTeacher(id);
+            return RedirectToAction("List");
+        }
+
+        //POST: /Teacher/Create
+        [HttpPost]
+
+        public ActionResult Create(string TeacherFname, string TeacherLname,string EmployeeNumber, decimal Salary)
+        {
+            Debug.WriteLine("I have accessed the Create Method");
+            Debug.WriteLine(TeacherFname);
+            Debug.WriteLine(TeacherLname);
+            Debug.WriteLine(EmployeeNumber);
+
+            Teacher NewTeacher = new Teacher();
+            NewTeacher.TeacherFname = TeacherFname;
+            NewTeacher.TeacherLname = TeacherLname;
+            NewTeacher.EmployeeNumber = EmployeeNumber;
+            NewTeacher.Salary = Salary;
+
+            TeacherDataController controller = new TeacherDataController();
+            controller.AddTeacher(NewTeacher);
+
+            return RedirectToAction("List");
+        }
+
+        //GET : /Teacher/DeleteConfirm/{Id}
+
+        public ActionResult DeleteConfirm(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher NewTeacher = controller.FindTeacher(id);
+
+            return View(NewTeacher);
+        }
     }
 }

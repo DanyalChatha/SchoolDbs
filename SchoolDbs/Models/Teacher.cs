@@ -16,5 +16,7 @@ namespace SchoolDb.Models
         public decimal Salary;
         public DateTime HireDate;
 
+        public Teacher() { }
+
     }
 }

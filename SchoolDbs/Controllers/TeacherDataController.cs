@@ -128,5 +128,68 @@ namespace SchoolDb.Controllers
 
         }
 
+        [HttpPost]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        public void AddTeacher([FromBody]Teacher NewTeacher)
+        {
+            MySqlConnection Conn = School.AccessDatabase(); 
+
+            Debug.WriteLine(NewTeacher.TeacherFname);
+
+            Conn.Open();
+
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            cmd.CommandText = "insert into teachers (teacherfname, teacherlname, employeenumber, salary, hiredate) values (@TeacherFname,@TeacherLname,@EmployeeNumber, @Salary, CURRENT_DATE())";
+            cmd.Parameters.AddWithValue("@TeacherFname", NewTeacher.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", NewTeacher.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNumber", NewTeacher.EmployeeNumber);
+            cmd.Parameters.AddWithValue("@Salary", NewTeacher.Salary);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
+
+
+        }
+
+
+
+        [HttpPost]
+        [Route("api/TeacherData/DeleteTeacher/{TeacherId}")]
+        public void DeleteTeacher(int TeacherId)
+        {
+            MySqlConnection Conn = School.AccessDatabase();
+
+            Conn.Open();
+
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            cmd.CommandText = "Delete from teachers where teacherid=@id";
+            cmd.Parameters.AddWithValue("@id", TeacherId);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();   
+
+        }
+    }
+
+    internal class EnableCorsAttribute : Attribute
+    {
+        private string origins;
+        private string methods;
+        private string headers;
+
+        public EnableCorsAttribute(string origins, string methods, string headers)
+        {
+            this.origins = origins;
+            this.methods = methods;
+            this.headers = headers;
+        }
     }
 }
