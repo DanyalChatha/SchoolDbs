@@ -53,7 +53,7 @@ namespace SchoolDb.Controllers
             //Gather Result Set of Query into a variable
             MySqlDataReader ResultSet = cmd.ExecuteReader();
 
-            //Create an empty list of Authors
+            //Create an empty list of Teacher
             List<Teacher> Teachers = new List<Teacher> { };
             
             //Loop Through Each Row the Result Set

@@ -83,5 +83,13 @@ namespace SchoolDb.Controllers
 
             return View(NewTeacher);
         }
+
+        public ActionResult Update(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+
+            return View(SelectedTeacher);
+        }
     }
 }
