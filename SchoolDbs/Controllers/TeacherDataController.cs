@@ -17,18 +17,19 @@ namespace SchoolDb.Controllers
         private SchoolDbContext School = new SchoolDbContext();
 
 
+        //This Controller Will access the teacher table of our blog database.
         /// <summary>
         /// Returns a list of Teachers in the system
         /// </summary>
-        /// <example>GET api/TeacherData/ListTeacher</example>
         /// <returns>
-        /// A list of Teacher (first names and last names)
+        /// A list of Teacher Objects with fields mapped to the database column values (first name, last name, employee).
         /// </returns>
+        /// <example>GET api/TeacherData/ListTeachers -> {Teacher Object, Teacher Object, teacherr Object...}</example>
         [HttpGet]
         [Route("api/TeacherData/ListTeacher/{SearchKey}")]
-
-        public IEnumerable<Teacher> listTeacher(string SearchKey)
+        public IEnumerable<Teacher> ListTeacher(string SearchKey)
         {
+            //Create an instance of a connection
             MySqlConnection Conn = School.AccessDatabase();
 
             //Open the connection between the web server and database
@@ -84,14 +85,13 @@ namespace SchoolDb.Controllers
             return Teachers;
 
         }
-
-        /// <summary>
-        /// Grabs a particular Teacher from the database given the ID
+         /// <summary>
+        /// Finds an author from the MySQL Database through an id. 
         /// </summary>
-        /// <param name="TeacherId"></param>
-        /// <returns>
-        /// A teachers that coresponds to the id the user input will be shown with details.
-        /// </returns>
+        /// <param name="TeacherId">The Teacher ID</param>
+        /// <returns>Teacher object containing information about the author with a matching ID. Empty Author Object if the ID does not match any authors in the system.</returns>
+        /// <example>api/TeacherData/FindTeacher/2-> {Teacher Object}</example>
+        /// <example>api/TeacherData/FindTeacher/7 -> {Teacher Object}</example>
         [HttpGet]
         [Route("api/teacherdata/findteacher/{teacherid}")]
 
@@ -128,11 +128,24 @@ namespace SchoolDb.Controllers
 
         }
 
+
+        /// <summary>
+        /// Adds an Teacher to the MySQL Database. 
+        /// </summary>
+        /// <param name="NewTeacher">An object with fields that map to the columns of the Teacher's table. </param>
+        /// <example>
+        /// POST api/TeacherData/AddTeacher 
+      	/// <example>
+        /// "TeacherFname": "Danyal"
+        ///	"TeacherLname":"Chatha",
+        ///	"EmployeeNumber":"T123",
+        ///	"Salary":"800.00"
+        ///	</example>
         [HttpPost]
         [EnableCors(origins: "*", methods: "*", headers: "*")]
-        public void AddTeacher([FromBody]Teacher NewTeacher)
+        public void AddTeacher([FromBody] Teacher NewTeacher)
         {
-            MySqlConnection Conn = School.AccessDatabase(); 
+            MySqlConnection Conn = School.AccessDatabase();
 
             Debug.WriteLine(NewTeacher.TeacherFname);
 
@@ -157,7 +170,55 @@ namespace SchoolDb.Controllers
         }
 
 
+        /// <summary>
+        /// Updates an Teacher on the MySQL Database. .
+        /// </summary>
+        /// <param name="TeacherInfo">An object with fields that map to the columns of the author's table.</param>
+        /// <example>
+        /// POST api/TeacherData/UpdateTeacher/12 
+        /// <example>
+        /// "TeacherFname": "Danyal"
+        ///	"TeacherLname":"Chatha",
+        ///	"EmployeeNumber":"T123",
+        ///	"Salary":"800.00"
+        /// </example>
+        [HttpPost]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        public void UpdateTeacher(int TeacherId, [FromBody] Teacher TeacherInfo)
+        {
+            //Create an instance of a connection
+            MySqlConnection Conn = School.AccessDatabase();
 
+            Debug.WriteLine(TeacherInfo.TeacherFname);
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            //SQL QUERY
+            cmd.CommandText = "update teachers set teacherfname=@teacherFname, teacherlname=@teacherLname, employeeNumbe=@EmployeeNumber salary=@Salary teacherid=@TeacherId";
+            cmd.Parameters.AddWithValue("@TeacherFname", TeacherInfo.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", TeacherInfo.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNumber", TeacherInfo.EmployeeNumber);
+            cmd.Parameters.AddWithValue("@Salary", TeacherInfo.Salary);
+            cmd.Parameters.AddWithValue("@TeacherId", TeacherId);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
+        }
+
+
+        //// <summary>
+        /// Deletes an Author from the connected MySQL Database if the ID of that Teacher exists.
+        /// </summary>
+        /// <param name="TeacherId">The ID of the teacher</param>
+        /// <example>POST /api/TeacherData/DeleteTeacher/3</example>
         [HttpPost]
         [Route("api/TeacherData/DeleteTeacher/{TeacherId}")]
         public void DeleteTeacher(int TeacherId)

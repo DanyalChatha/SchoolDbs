@@ -11,16 +11,16 @@ namespace SchoolDb.Controllers
     public class TeacherController : Controller
     {
         // GET: Teacher/list
-        public ActionResult list(string SearchKey)
+        public ActionResult List(string SearchKey)
         {
             TeacherDataController MyController = new TeacherDataController();
-            IEnumerable<Teacher> Teachers = MyController.listTeacher(SearchKey);
+            IEnumerable<Teacher> Teachers = MyController.ListTeacher(SearchKey);
  
             return View(Teachers);
         }
 
         //GET: Teacher/show/{teacherid}
-        public ActionResult show(int id)
+        public ActionResult Show(int id)
         {
             TeacherDataController MyController = new TeacherDataController();
             Teacher SelectedTeacher = MyController.FindTeacher(id);
@@ -83,6 +83,8 @@ namespace SchoolDb.Controllers
 
             return View(NewTeacher);
         }
+
+        //GET : /Teacher/Update/{Id}
 
         public ActionResult Update(int id)
         {
