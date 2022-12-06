@@ -1,10 +1,10 @@
-﻿using SchoolDb.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SchoolDb.Models;
+using System.Diagnostics;
 
 namespace SchoolDb.Controllers
 {
@@ -13,17 +13,17 @@ namespace SchoolDb.Controllers
         // GET: Teacher/list
         public ActionResult List(string SearchKey)
         {
-            TeacherDataController MyController = new TeacherDataController();
-            IEnumerable<Teacher> Teachers = MyController.ListTeacher(SearchKey);
- 
+            TeacherDataController Controller = new TeacherDataController();
+            IEnumerable<Teacher> Teachers = Controller.ListTeacher(SearchKey);
+
             return View(Teachers);
         }
 
         //GET: Teacher/show/{teacherid}
         public ActionResult Show(int id)
         {
-            TeacherDataController MyController = new TeacherDataController();
-            Teacher SelectedTeacher = MyController.FindTeacher(id);
+            TeacherDataController Controller = new TeacherDataController();
+            Teacher SelectedTeacher = Controller.FindTeacher(id);
 
             return View(SelectedTeacher);
         }
@@ -55,7 +55,7 @@ namespace SchoolDb.Controllers
         //POST: /Teacher/Create
         [HttpPost]
 
-        public ActionResult Create(string TeacherFname, string TeacherLname,string EmployeeNumber, decimal Salary)
+        public ActionResult Create(string TeacherFname, string TeacherLname, string EmployeeNumber, decimal Salary)
         {
             Debug.WriteLine("I have accessed the Create Method");
             Debug.WriteLine(TeacherFname);
@@ -74,7 +74,7 @@ namespace SchoolDb.Controllers
             return RedirectToAction("List");
         }
 
-        //GET : /Teacher/DeleteConfirm/{Id}
+        //GET : /Teacher/DeleteConfirm/{id}
 
         public ActionResult DeleteConfirm(int id)
         {
@@ -84,14 +84,36 @@ namespace SchoolDb.Controllers
             return View(NewTeacher);
         }
 
-        //GET : /Teacher/Update/{Id}
 
-        public ActionResult Update(int id)
+        //GET : /Teacher/Update/{id}
+        [HttpGet]
+
+        public ActionResult Update(int Id)
         {
             TeacherDataController controller = new TeacherDataController();
-            Teacher SelectedTeacher = controller.FindTeacher(id);
+            Teacher SelectedTeacher = controller.FindTeacher(Id);
 
             return View(SelectedTeacher);
+        }
+
+        [HttpPost]
+        public ActionResult Update(int id, string TeacherFname, string TeacherLname, string EmployeeNumber, decimal Salary)
+        {
+            Teacher TeacherInfo = new Teacher();
+            TeacherInfo.TeacherFname = TeacherFname;
+            TeacherInfo.TeacherLname = TeacherLname;
+            TeacherInfo.EmployeeNumber = EmployeeNumber;
+            TeacherInfo.Salary = Salary;
+
+            TeacherDataController controller = new TeacherDataController();
+            controller.UpdateTeacher(id, TeacherInfo);
+
+            return RedirectToAction("Show/" + id);
+
+
+
+
+
         }
     }
 }

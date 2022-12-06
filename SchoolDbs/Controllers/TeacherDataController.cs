@@ -1,13 +1,13 @@
-﻿using MySql.Data.MySqlClient;
-using SchoolDb.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using SchoolDb.Models;
+using MySql.Data.MySqlClient;
+using System.Diagnostics;
+
 
 namespace SchoolDb.Controllers
 {
@@ -35,11 +35,11 @@ namespace SchoolDb.Controllers
             //Open the connection between the web server and database
             Conn.Open();
 
-            Debug.WriteLine("The search key is"+SearchKey);
+            Debug.WriteLine("The search key is" + SearchKey);
 
 
             string query = "select * from teachers where teacherfname like @key or teacherlname like @key or (concat(teacherfname,' ', teacherlname)) like @key";
-            
+
             Debug.WriteLine(query);
 
             //Establish a new command (query) for our database
@@ -47,7 +47,7 @@ namespace SchoolDb.Controllers
             cmd.CommandText = query;
 
 
-            cmd.Parameters.AddWithValue("@key", "%"+SearchKey+"%");
+            cmd.Parameters.AddWithValue("@key", "%" + SearchKey + "%");
             cmd.Prepare();
 
 
@@ -56,7 +56,7 @@ namespace SchoolDb.Controllers
 
             //Create an empty list of Teacher
             List<Teacher> Teachers = new List<Teacher> { };
-            
+
             //Loop Through Each Row the Result Set
             while (ResultSet.Read())
             {
@@ -85,7 +85,7 @@ namespace SchoolDb.Controllers
             return Teachers;
 
         }
-         /// <summary>
+        /// <summary>
         /// Finds an author from the MySQL Database through an id. 
         /// </summary>
         /// <param name="Id">The Teacher ID</param>
@@ -106,7 +106,7 @@ namespace SchoolDb.Controllers
             string query = "select * from teachers where teacherid = @id";
             MySqlCommand cmd = Conn.CreateCommand();
             cmd.CommandText = query;
-            cmd.Parameters.AddWithValue("@id",Id);
+            cmd.Parameters.AddWithValue("@id", Id);
             cmd.Prepare();
 
             MySqlDataReader ResultSet = cmd.ExecuteReader();
@@ -169,7 +169,6 @@ namespace SchoolDb.Controllers
 
         }
 
-
         /// <summary>
         /// Updates an Teacher on the MySQL Database. .
         /// </summary>
@@ -189,7 +188,7 @@ namespace SchoolDb.Controllers
             //Create an instance of a connection
             MySqlConnection Conn = School.AccessDatabase();
 
-            Debug.WriteLine(TeacherInfo.TeacherFname);
+            //Debug.WriteLine(TeacherInfo.TeacherFname);
 
             //Open the connection between the web server and database
             Conn.Open();
@@ -198,7 +197,7 @@ namespace SchoolDb.Controllers
             MySqlCommand cmd = Conn.CreateCommand();
 
             //SQL QUERY
-            cmd.CommandText = "update teachers set teacherfname=@teacherFname, teacherlname=@teacherLname, employeeNumbe=@EmployeeNumber salary=@Salary teacherid=@TeacherId";
+            cmd.CommandText = "update teachers set teacherfname=@teacherFname, teacherlname=@teacherLname, employeenumber=@EmployeeNumber, salary=@Salary where teacherid=@TeacherId";
             cmd.Parameters.AddWithValue("@TeacherFname", TeacherInfo.TeacherFname);
             cmd.Parameters.AddWithValue("@TeacherLname", TeacherInfo.TeacherLname);
             cmd.Parameters.AddWithValue("@EmployeeNumber", TeacherInfo.EmployeeNumber);
@@ -214,7 +213,6 @@ namespace SchoolDb.Controllers
         }
 
 
-  
         /// <summary>
         /// Deletes an Author from the connected MySQL Database if the ID of that Teacher exists.
         /// </summary>
@@ -236,22 +234,9 @@ namespace SchoolDb.Controllers
 
             cmd.ExecuteNonQuery();
 
-            Conn.Close();   
+            Conn.Close();
 
         }
     }
 
-    internal class EnableCorsAttribute : Attribute
-    {
-        private string origins;
-        private string methods;
-        private string headers;
-
-        public EnableCorsAttribute(string origins, string methods, string headers)
-        {
-            this.origins = origins;
-            this.methods = methods;
-            this.headers = headers;
-        }
-    }
 }
