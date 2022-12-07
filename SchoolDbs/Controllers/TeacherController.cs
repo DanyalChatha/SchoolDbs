@@ -96,6 +96,8 @@ namespace SchoolDb.Controllers
             return View(SelectedTeacher);
         }
 
+
+        //POST: /Teacher/Update/{id}
         [HttpPost]
         public ActionResult Update(int id, string TeacherFname, string TeacherLname, string EmployeeNumber, decimal Salary)
         {
