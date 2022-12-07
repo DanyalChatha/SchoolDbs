@@ -3,6 +3,7 @@ using SchoolDb.Models;
 using SchoolDbs.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -25,17 +26,25 @@ namespace SchoolDbs.Controllers
         /// a list of all Students in the databases
         /// </returns>
         [HttpGet]
-        public IEnumerable<Student> listStudent()
+        [Route("api/StudentData/ListStudent/{SearchKey}")]
+        public IEnumerable<Student> listStudent(string SearchKey)
         {
             //Goal: connect to database
             MySqlConnection Conn = School.AccessDatabase();
 
             Conn.Open();
 
+            Debug.WriteLine("The search key is" + SearchKey);
+
             //run an sql command "select * from students"
-            string query = "select * from students";
+            string query = "select * from students where studentfname like @key or studentlname like @key or (concat(studentfname, ' ', studentlname)) like @key";
+
+            Debug.WriteLine(query);
+
             MySqlCommand cmd = Conn.CreateCommand();
             cmd.CommandText = query;
+
+            cmd.Parameters.AddWithValue("@key", "%" + SearchKey + "%");
 
             MySqlDataReader ResultSet = cmd.ExecuteReader();
             List<Student> Students = new List<Student>();

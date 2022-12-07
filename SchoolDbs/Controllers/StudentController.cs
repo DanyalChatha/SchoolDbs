@@ -16,10 +16,10 @@ namespace SchoolDbs.Controllers
         }
 
         // GET: Student/List
-        public ActionResult List()
+        public ActionResult List(string SearchKey)
         {
             StudentDataController Controller = new StudentDataController();
-            IEnumerable<Student> Students = Controller.listStudent();
+            IEnumerable<Student> Students = Controller.listStudent(SearchKey);
 
             return View(Students);
         }
