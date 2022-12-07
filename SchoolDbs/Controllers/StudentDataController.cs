@@ -1,4 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
+using SchoolDbs.Controllers;
+using SchoolDb.Controllers;
 using SchoolDb.Models;
 using SchoolDbs.Models;
 using System;
@@ -65,10 +67,10 @@ namespace SchoolDbs.Controllers
                 Students.Add(NewStudent);
             }
 
-                //go through the result set
-                //for each row in the result set, add the students
-                Conn.Close();
-                return Students;
+            //go through the result set
+            //for each row in the result set, add the students
+            Conn.Close();
+            return Students;
         }
 
         /// <summary>
@@ -91,7 +93,7 @@ namespace SchoolDbs.Controllers
             //run an sql command "select * from articles"
             string query = "select * from students where studentid =" + StudentId;
             MySqlCommand cmd = Conn.CreateCommand();
-            cmd.CommandText= query;
+            cmd.CommandText = query;
 
             MySqlDataReader ResultSet = cmd.ExecuteReader();
 
@@ -106,6 +108,106 @@ namespace SchoolDbs.Controllers
 
             Conn.Close();
             return SelectedStudent;
+        }
+
+        /// <summary>
+        /// Adds an Student to the MySQL Database. 
+        /// </summary>
+        /// <param name="NewStudent">An object with fields that map to the columns of the Student's table. </param>
+        /// <example>
+        /// POST api/StudentData/AddStudent 
+      	/// <example>
+        /// "StudentFname": "Danyal"
+        ///	"StudentLname":"Chatha",
+        ///	"StudentNumber":"T123",
+        ///	</example>
+        [HttpPost]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        public void AddTeacher([FromBody] Student NewStudent)
+        {
+            MySqlConnection Conn = School.AccessDatabase();
+
+            Debug.WriteLine(NewStudent.StudentFname);
+
+            Conn.Open();
+
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            cmd.CommandText = "insert into Students (studentfname, studentlname, studentnumber) values (@StudentFname,@StudentLname,@StudentNumber)";
+            cmd.Parameters.AddWithValue("@StudentFname", NewStudent.StudentFname);
+            cmd.Parameters.AddWithValue("@StudentLname", NewStudent.StudentLname);
+            cmd.Parameters.AddWithValue("@StudentNumber", NewStudent.StudentNumber);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+        }
+
+        /// <summary>
+        /// Deletes an Student from the connected MySQL Database if the ID of that Student exists.
+        /// </summary>
+        /// <param name="Id">The ID of the Student</param>
+        /// <example>POST /api/StudentData/DeleteStudent/2</example> 
+        [HttpPost]
+        [Route("api/StudentData/DeleteStudent/{Id}")]
+        public void DeleteStudent(int Id)
+        {
+            MySqlConnection Conn = School.AccessDatabase();
+
+            Conn.Open();
+
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            cmd.CommandText = "Delete from student where studentid=@id";
+            cmd.Parameters.AddWithValue("@id", Id);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+        }
+
+        /// <summary>
+        /// Updates an student on the MySQL Database. .
+        /// </summary>
+        /// <param name="StudentInfo">An object with fields that map to the columns of the student's table.</param>
+        /// <example>
+        /// POST api/StudentData/UpdateStudent/12 
+        /// <example>
+        /// "StudentFname": "Danyal"
+        ///	"StudentLname":"Chatha",
+        ///	"StudentNumber":"T123",
+        /// </example>
+        [HttpPost]
+        [EnableCors(origins: "*", methods: "*", headers: "*")]
+        public void UpdateStudent(int Id, [FromBody] Student StudentInfo)
+        {
+            //Create an instance of a connection
+            MySqlConnection Conn = School.AccessDatabase();
+
+            //Debug.WriteLine(StudentInfo.StudentFname);
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            //SQL QUERY
+            cmd.CommandText = "update students set studentfname=@StudentFname, studentlname=@StudentLname, studentnumber=@StudentNumber where studentid=@StudentId";
+            cmd.Parameters.AddWithValue("@StudentFname", StudentInfo.StudentFname);
+            cmd.Parameters.AddWithValue("@StudentLname", StudentInfo.StudentLname);
+            cmd.Parameters.AddWithValue("@studentnumber", StudentInfo.StudentNumber);
+            cmd.Parameters.AddWithValue("@StudentId", Id);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
         }
     }
 }

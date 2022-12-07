@@ -45,7 +45,7 @@ namespace SchoolDb.Models
         public MySqlConnection AccessDatabase()
         {
             //We are instantiating the MySqlConnection Class to create an object
-            //the object is a specific connection to our blog database on port 3307 of localhost
+            //the object is a specific connection to our blog database on port 3306 of localhost
             return new MySqlConnection(ConnectionString);
         }
     }
