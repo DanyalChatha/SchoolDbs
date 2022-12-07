@@ -112,10 +112,15 @@ namespace SchoolDb.Controllers
 
             return RedirectToAction("Show/" + id);
 
+                       
+        }
 
+        public ActionResult Ajax_Update(int id)
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
 
-
-
+            return View(SelectedTeacher);
         }
     }
 }
